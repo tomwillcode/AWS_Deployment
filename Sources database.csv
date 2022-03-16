@@ -1,0 +1,47 @@
+URL,Source Type,Domain,Domain Type,Domain Restrictions
+https://news.yahoo.com/,News Site,,,
+https://www.huffpost.com/,News Site,,,
+https://www.vice.com/en/section/news,News Site,,,
+https://www.buzzfeednews.com/,News Site,,,
+https://www.msn.com/en-us/news,News Site,,,
+https://www.theglobeandmail.com/,News Site,,,
+https://www.macleans.ca/,News Site,,,
+https://nationalpost.com/,News Site,,,
+https://www.nytimes.com,News Site,,,
+https://www.bbc.com,News Site,,,
+https://www.cbc.ca/,News Site,,,
+https://www.cnn.com/,News Site,,,
+https://www.wsj.com/,News Site,,,
+https://www.forbes.com/,News Site,,,
+https://www.bnnbloomberg.ca/,News Site,,,
+https://www.bloomberg.com/,News Site,,,
+https://www.thestar.com/,News Site,,,
+https://www.telegraph.co.uk/,News Site,,,
+https://www.theguardian.com/,News Site,,,
+https://www.washingtonpost.com/,News Site,,,
+https://arxiv.org/,Accademic,,,
+https://plos.org/,Accademic,,,
+https://www.sciencedirect.com/,Accademic,,,
+https://pubmed.ncbi.nlm.nih.gov/,Accademic,,,
+https://www.mdpi.com/,Accademic,,,
+https://www.nejm.org/,Accademic,,,
+https://www.nature.com/,Accademic,,,
+https://www.elsevier.ca/ca/,Accademic,,,
+https://www.cell.com/,Accademic,,,
+https://www.reddit.com/,Social Media,,,
+https://www.linkedin.com/,Social Media,,,
+https://twitter.com/,Social Media,,,
+https://www.facebook.com/,Social Media,,,
+https://www.quora.com/,Social Media,,,
+https://www.youtube.com/,Social Media,,,
+https://en.wikipedia.org/wiki/,Wiki,,,
+,,.gov.au,Government,TRUE
+,,.gov.uk,Government,TRUE
+,,.gc.ca,Government,TRUE
+,,.gov,Government,TRUE
+,,.org,NGO/non-profit,FALSE
+,,.ngo,NGO/non-profit,TRUE
+,,.edu,Accademic ,TRUE
+,,.mil,Government,TRUE
+,,.ong,NGO/non-profit,TRUE
+,,.com,,FALSE
