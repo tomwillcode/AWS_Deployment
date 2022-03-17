@@ -128,8 +128,10 @@ def deep_dive_all_links(DF1):
                     current_sentence = (DF1.iloc[row][working_sentence_column])
                     #NOW GO INTO Transformers
                     try:
+                        logger.info("new deep dive")
                         current_deep_dive = sentence_link_NLI_analysis(current_sentence, href)
                     except Exception:
+                        logger.warning("exception handled for current deep dive")
                         current_deep_dive = {'contradictions':[],'entailments':[]}
                     #code built into the above function will cause it to skip any errors and return a dictionary with "None" types if errors happen inside that function
                     #down below cells will be updated with None types in the event that the NLI analysis runs into an error.
