@@ -123,6 +123,7 @@ def deep_dive_all_links(DF1):
                 if (type(DF1.iloc[row][working_column]))!=float:
                 #grab href from the cell as string
                     href = (list((DF1.iloc[row][working_column]).links).pop())
+                    logger.info(href)
                     #href = str((DF1.iloc[row][working_column]).links)
                     #grab sentence that contains that href also in string form
                     current_sentence = (DF1.iloc[row][working_sentence_column])
@@ -131,7 +132,7 @@ def deep_dive_all_links(DF1):
                         logger.info("new deep dive")
                         current_deep_dive = sentence_link_NLI_analysis(current_sentence, href)
                     except Exception:
-                        logger.warning("exception handled for current deep dive")
+                        logger.info("exception handled for current deep dive")
                         current_deep_dive = {'contradictions':[],'entailments':[]}
                     #code built into the above function will cause it to skip any errors and return a dictionary with "None" types if errors happen inside that function
                     #down below cells will be updated with None types in the event that the NLI analysis runs into an error.

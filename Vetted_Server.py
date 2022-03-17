@@ -79,4 +79,4 @@ def read_item(key):
         return json_array_for_client
 
 if __name__ == "__main__":
-    uvicorn.run("Vetted_Server:app", host="0.0.0.0", port=8000, log_level="error", log_config="log.ini")
+    uvicorn.run("Vetted_Server:app", host="127.0.0.1", port=8000, log_level="debug", log_config="log.ini")
