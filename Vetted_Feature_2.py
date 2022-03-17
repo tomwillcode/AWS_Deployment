@@ -8,10 +8,15 @@ import pandas as pd
 from urllib.parse import urlparse
 import numpy as np
 import nltk.data
+import logging
+logger = logging.getLogger(__name__)
+
 #must use nltk.download('punkt')
 
 
 def NLI_assessment(string_1, string_2):
+    logger.info("Model Prediction Started")
+
     tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
     model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
     device = "cuda:0" if t.cuda.is_available() else "cpu"
@@ -33,6 +38,8 @@ def NLI_assessment(string_1, string_2):
 
 #as used in feature 1 gets all elements of a specified type from a URL
 def parse_elements(url,element):
+    logger.info('parse elements started')
+
     session = HTMLSession()
     r = session.get(url)
     #r.html.render()
@@ -41,12 +48,16 @@ def parse_elements(url,element):
 
 #breaks a paragraph as string down into a list of sentence/strings from paragraph
 def sentence_list(paragraph_string):
+    logger.info('sentence list started')
+
     tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     list_of_sentences = tokenizer.tokenize(paragraph_string)
     return list_of_sentences
 
 #takes a list of <p> elements and returns a list of sentence/strings in order from first to last.
 def p_as_sentence_list(paragraphs_list):
+    logger.info('p as sentence list started')
+
     returned_list = []
     for paragraph in paragraphs_list:
         paragraph_text = paragraph.text
@@ -57,6 +68,8 @@ def p_as_sentence_list(paragraphs_list):
 
 #takes a sentence and a url and compares the input sentence to every single sentence in the linked URL using NLI to see if they are in agreement or if there is missing context or misrepresentation.
 def sentence_link_NLI_analysis(sentence, link):
+    logger.info('sentence link NLI analysis')
+
     paragraphs = parse_elements(link,'p')
     sentences = p_as_sentence_list(paragraphs)
     contradictions_list =[]
@@ -93,6 +106,8 @@ def sentence_link_NLI_analysis(sentence, link):
 
 
 def deep_dive_all_links(DF1):
+    logger.info('deep dive all links started')
+
     #first establish the first column to iterate through
     column_variable = 1
     working_column = 'Link ' + (str(column_variable))
