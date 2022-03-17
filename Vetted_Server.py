@@ -6,7 +6,11 @@ from pydantic import BaseModel
 import json
 from Vetted_Feature_1 import Feature_1_analysis
 from Vetted_Feature_2 import deep_dive_all_links
-app = FastAPI()
+import uvicorn
+import logging
+
+app = FastAPI(debug=True)
+logger = logging.getLogger(__name__)
 
 #very important code that comes next. This allows permissions of what addresses can make a request to this server.
 # the "origins" allows the front-end chrome extension to make requests
@@ -46,6 +50,7 @@ def add_hello_world(string):
 #if not the article URL is passed to the functions for vetting, and then all the information is added to the database
 @app.post("/post")
 async def post_item(request: Article):
+    logger.info("Post request made")
     current_url = json.loads(request.json())
     url = current_url['url']
     query = (query_articles_table(url))
@@ -73,4 +78,5 @@ def read_item(key):
         json_array_for_client = json.dumps(array_for_client)
         return json_array_for_client
 
-
+if __name__ == "__main__":
+    uvicorn.run("Vetted_Server:app", host="0.0.0.0", port=8000, log_level="error", log_config="log.ini")
