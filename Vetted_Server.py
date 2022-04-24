@@ -62,7 +62,11 @@ async def post_item(request: Article):
        add_info_to_db(dataframe, url)
     else:
         pass
-    return request.json()
+    #check if the article has been vetted
+    if(query_citations_table(url) == None):
+        return json.dumps({'status': False})
+    else:
+        return json.dumps({'status':True})
 
 #this endpoint checks to see if data for an articles citations are already in the database, and if so it grabs that data and sends the appropriate JSON object back to the front-end
 #In the event that the article has no data in the citations table in the database, this endpoint returns None so the algorithm on the front-end can keep checking.
@@ -79,4 +83,5 @@ def read_item(key):
         return json_array_for_client
 
 if __name__ == "__main__":
-    uvicorn.run("Vetted_Server:app", host="127.0.0.1", port=8000, log_level="debug", log_config="log.ini")
+    #uvicorn.run("Vetted_Server:app", host="127.0.0.1", port=8000, log_level="debug", log_config="log.ini")
+    uvicorn.run("Vetted_Server:app", host="127.0.0.1", port=8000)
