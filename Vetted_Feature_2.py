@@ -1,5 +1,5 @@
 import torch as t
-
+import time
 from transformers import BartForSequenceClassification, BartTokenizer
 #tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
 #model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
@@ -14,18 +14,46 @@ logger = logging.getLogger(__name__)
 #must use nltk.download('punkt')
 
 
-def NLI_assessment(string_1, string_2):
+def NLI_assessment(string_1, string_2, model, tokenizer):
     logger.info("Model Prediction Started")
-
-    tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
-    model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
+    #nli_start_time = time.time()
+    #start = time.time()
+    #tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
+    #stop = time.time()
+    #print("tokenizer definition takes")
+    #print(start-stop)
+    #start = time.time()
+    #model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
+    #stop = time.time()
+    #print("model definition takes")
+    #print(start - stop)
+    #start = time.time()
     device = "cuda:0" if t.cuda.is_available() else "cpu"
     model = model.to(device)
+    #stop = time.time()
+    #print("setting the device takes")
+    #print(start - stop)
+    #start = time.time()
     input_ids = tokenizer.encode(string_1, string_2, return_tensors='pt').to(device)
+    #stop = time.time()
+    #print("tokenizing the strings takes")
+    #print(start - stop)
     #input_ids = tokenizer.encode(string_1, string_2, return_tensors='pt')
     try:
+        #start = time.time()
         logits = model(input_ids)[0]
+        #stop = time.time()
+        #print("running the tokenized strings through the model takes")
+        #print(start - stop)
+
+        #start = time.time()
         probability_vector = logits.softmax(dim=1)
+        #stop = time.time()
+        #print("giving the probability vector to softmax to get proper probabilities takes")
+        #print(start - stop)
+        #nli_end_time = time.time()
+        #print("total NLI_assessment time was")
+        #print(nli_start_time-nli_end_time)
         NLI_probabilities = {}
         NLI_probabilities["contradiction"] = probability_vector[:,0].item()
         NLI_probabilities["neutral"] = probability_vector[:, 1].item()
@@ -76,11 +104,13 @@ def sentence_link_NLI_analysis(sentence, link):
     entailments_list =[]
     refined_contradictions_list =[]
     returned_dictionary = {}
+    tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
+    model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
     for item in sentences:
         #getting an error for an empty set the model doesn't want that. Hence len > 0
         if len(item) > 0:
             try:
-                current_assessment = NLI_assessment(sentence, item)
+                current_assessment = NLI_assessment(sentence, item, model, tokenizer)
                 current_assessment['item'] = item
                 #now two IF statements will see if the current "item" meets the threshold for contradiction or entailment with the citing sentence
                 if current_assessment['contradiction'] >= (2/3):
@@ -93,13 +123,13 @@ def sentence_link_NLI_analysis(sentence, link):
             continue
     #next a for loop to deal with the high rate of type 1 errors re: false contradictions. Feeding the two strings to the model in reverse order should do a good job of eliminating false contradictions and keeping true contradictions
     for contradiction in contradictions_list:
-        revised_assessment = NLI_assessment(contradiction, sentence)
+        revised_assessment = NLI_assessment(contradiction, sentence, model,tokenizer)
         if revised_assessment['contradiction'] >= (2/3):
             refined_contradictions_list.append(contradiction)
     #all true contradictions should be appended to a "true contradictions" list
     returned_dictionary['contradictions'] = refined_contradictions_list
     returned_dictionary['entailments'] = entailments_list
-    #print(returned_dictionary)
+    print(returned_dictionary)
     return(returned_dictionary)
 
 

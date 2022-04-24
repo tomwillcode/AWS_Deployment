@@ -269,11 +269,17 @@ def vett_again():
         current_article_link = (query_articles_table_ID(index_variable)).article_url
         if query_citations_table(current_article_link) == None:
             print("The following article has no vetted citations associated with it. This means there were either no hyperlinks in the article or the Vetting process encountered an error.")
+            print(current_article_link)
             print("commencing with the next vetting attempt")
+            #try:
             dataframe = Feature_1_analysis(current_article_link)
             dataframe = deep_dive_all_links(dataframe)
-            check_db_connection()
+                #check_db_connection()
             add_info_to_db(dataframe, current_article_link)
+           # except:
+            #    Exception
+             #   print(Exception)
+                #print(f'there was a problem with the previous vetting attempt for {current_article_link}')
             index_variable = index_variable+1
         else:
             index_variable = index_variable+1
