@@ -1,4 +1,4 @@
-libmysqlclient-dev==1.0.5
+default-libmysqlclient-dev==1.0.5
 anyio==3.4.0
 appdirs==1.4.4
 asgiref==3.4.1
