@@ -54,7 +54,7 @@ SQLAlchemy==1.4.27
 starlette==0.16.0
 tokenizers==0.10.3
 --find-links https://download.pytorch.org/whl/torch_stable.html
-torch==1.10.0+cpu
+torch==1.11.0
 tqdm==4.62.3
 transformers==4.19.1
 typing-extensions==3.10.0.2
