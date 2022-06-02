@@ -41,3 +41,5 @@ print("beginning nli")
 print(NLI_assessment(sentence, item, model, tokenizer))
 print("nli test passed")
 
+print("beginning vetting test for a sentence and it's hyperlink")
+print(sentence_link_NLI_analysis(sentence, link))
