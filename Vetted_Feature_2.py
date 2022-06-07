@@ -12,6 +12,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 #must use nltk.download('punkt')
+tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
+model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
+
 
 
 def NLI_assessment(string_1, string_2, model, tokenizer):
@@ -104,8 +107,8 @@ def sentence_link_NLI_analysis(sentence, link):
     entailments_list =[]
     refined_contradictions_list =[]
     returned_dictionary = {}
-    tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
-    model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
+    #tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
+    #model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
     for item in sentences:
         #getting an error for an empty set the model doesn't want that. Hence len > 0
         if len(item) > 0:
@@ -130,6 +133,7 @@ def sentence_link_NLI_analysis(sentence, link):
     returned_dictionary['contradictions'] = refined_contradictions_list
     returned_dictionary['entailments'] = entailments_list
     print(returned_dictionary)
+    logger.info(returned_dictionary)
     return(returned_dictionary)
 
 
