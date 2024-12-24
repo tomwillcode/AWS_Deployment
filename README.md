@@ -1,3 +1,11 @@
-## **Vetted Backend**
-This repo contains the codebase for the backend of the Vetted chrome extension which can be installed from here: https://chromewebstore.google.com/detail/vetted-launcher/fhonhdflkbgigofpohogckdeebpgjjcf?authuser=0&hl=en-GB
-I originally built this application to improve my Python programming skills. I obtained mentorship through the data science bootcamp program **[SharpestMinds](https://www.sharpestminds.com/)** 
+## **Overview**
+This repo contains the codebase for the backend of the Vetted chrome extension which can be installed from **[here:](https://chromewebstore.google.com/detail/vetted-launcher/fhonhdflkbgigofpohogckdeebpgjjcf?authuser=0&hl=en-GB)**
+Currently, the fact-checking is powered by Gemini 1.5 Flash. When I first built Vetted and put it in the chrome web store in 2022 it was powered by bart-large-mnli from Meta. 
+
+## **Vetted is now open source**
+Although I mainly built this application as a resume builder for myself, and because I think people should have access to tools that help them get the truth, I was of course also partial to the idea of selling Vetted for a lot of money. I met with a couple of VCs who advised me that this app needs to run on trade secrets so I should keep the codebase private. Trade secrets do seem to be par for the course when it comes to AI. Nonetheless, a lot has changed in three years. Three years ago I think the backend was innovative enough that it made sense to keep the codebase private. With half of the generative-AI-based applications we have now, Vetted is no longer that innovative or unique. Furthermore, it has become clear (if it was ever unclear) that a lot of software and applications are better when they're open source. For these reasons, I'm proud to make Vetted open-source. 
+
+## **Mission**
+On a broader level, I want to speak to the philosophical motivations behind Vetted. It is my opinion that misinformation, disinformation and scarcity of information are a plague on human societies and a source of great discord. Many school children play the "game of telephone," in class as an exercise in the fact that the further information travels from its source the more corrupted and less trustworthy it becomes. It seems that most students and teachers forget the lesson of this game and go out into the world and simply believe what they want to believe. Vetted is not based on a "Dark Knight" theory of civilization (sometimes people deserve better than the truth), but instead based on a "Dark Knight Rises" theory of civilization (we need to stop trying to outsmart the truth and let it have its day). My hope is that Vetted and similar technologies can end the lies and the game of telephone that plague the human condition.
+
+願いは誰にも撃ち落せない 
