@@ -16,7 +16,17 @@ from transformers import BartForSequenceClassification, BartTokenizer
 #print(os.cpu_count())
 #sentence_link_NLI_analysis('Canada’s greenhouse gas emissions have increased by 21.4 per cent from 1990 to 2019 and are driven mainly by oil and gas extraction and transport, according to the latest available data from the federal government.','https://www.canada.ca/en/environment-climate-change/services/environmental-indicators/greenhouse-gas-emissions.html')
 
+
+sentence = "“With the economy in excess demand, and inflation persisting well above target and expected to move higher in the near term, the Governing Council continues to judge that interest rates will need to rise further,” the Bank of Canada said in a statement."
+
+link = "https://www.bankofcanada.ca/2022/06/fad-press-release-2022-06-01/"
+
+print(sentence_link_NLI_analysis(sentence, link))
+
+
+'''
 string_list = ['sasdff', 'success', 'sdfsdfsdfsdf','sdfsdfsd','sdfsdfsdf,','sdfsdfsd','sdfsdfsd','sdfsdfsd','success', 'sdfsdfsd','sdfsdfsd','sdfsdfsd','sdfsdfsd','sdfsdfsd','sdfsdfsd','sdfsdfsd','sdfsdfsd','success']
+
 
 def if_item_matches(checked, against):
     if checked == against:
@@ -61,7 +71,7 @@ def execute_parralel_runs():
         return returned
 
 
-'''
+
 if __name__ == '__main__':
     #arr = Array('i', [6,8,10,23])
     something = parallel_runs(data_list, some_number, another_number)
@@ -73,7 +83,7 @@ if __name__ == '__main__':
 
 print(arr)
 
-'''
+
 
 variable_one = 8
 
@@ -85,16 +95,18 @@ variable_two = 9
 
 current_prod_xy = partial(prod_xy, y=variable_one, z=variable_two)
 
-'''
+
+
+
 if __name__ == "__main__":
     pool = Pool(processes=4)
     returned = pool.map(current_prod_xy, data_list)
     pool.close()
     pool.join()
     outside = returned
-'''
+
 #below is where it's at and you finally figured it out!!
-'''
+
 def cube(x):
     print(f"start process {x}")
     result = x * x * x
@@ -113,8 +125,8 @@ if __name__ == "__main__":
 
 print(returned)
 
-'''
-'''
+
+
 paragraphs = parse_elements('https://www.inc.com/magazine/202111/scott-eden/al-kahn-pokemon-yu-gi-oh-cabbage-patch-kids.html','p')
 
 test_sentences = []
@@ -124,11 +136,11 @@ for paragraph in paragraphs:
     test_sentences.append(current_sentences)
     print(test_sentences)
 print(test_sentences)
-'''
+
 
 #below is the code that proved that multiprocessing offers no advantage over serial processing
 
-'''
+
 getting_models_start = time.time()
 nli_tokenizer = BartTokenizer.from_pretrained('facebook/bart-large-mnli')
 nli_model = BartForSequenceClassification.from_pretrained('facebook/bart-large-mnli')
@@ -172,6 +184,6 @@ print(f'getting set up with the AI tools took {getting_models_end-getting_models
 print(f'serial processing took {serial_processing_end-serial_processing_start}')
 print(f'parralel processing took {parralel_processing_end-parralel_processing_start}')
 '''
-
+''' 
 
 

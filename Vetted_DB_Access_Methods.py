@@ -6,6 +6,10 @@ from Vetted_DB_Config import secret_key, Vetted_DB_URI_Connection
 from Vetted_Feature_1 import Feature_1_analysis
 from Vetted_Feature_2 import deep_dive_all_links
 from sqlalchemy.orm import relationship
+import logging
+logger = logging.getLogger(__name__)
+
+
 #from flask.ext.sqlalchemy import SQLAlchemy
 #will forms be needed? Difficult to say.
 #from forms import RegistrationForm, LoginForm
@@ -14,6 +18,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
 app.config['SQLALCHEMY_DATABASE_URI'] = Vetted_DB_URI_Connection
 #app.config['SQLALCHEMY_ECHO'] = True
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_recycle': 280,  # recycle connections before MySQL timeout
+    'pool_pre_ping': True,  # verify connection before use
+    'pool_size': 5,  # maintain up to 5 connections
+    'max_overflow': 10  # allow up to 10 additional connections
+}
+
 
 db = SQLAlchemy(app)
 
@@ -23,6 +34,29 @@ There are two tables. One for "Articles" and one for "Citations".
 The idea is that a given "Article" that needs to be vetted has many "Citations" associated with it.
 Thus every Citation has a foreign key linking it to the primary key of the parent "Article." 
 '''
+
+from functools import wraps
+from sqlalchemy.exc import OperationalError
+import time
+
+def retry_db_operation(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                return f(*args, **kwargs)
+            except OperationalError:
+                if attempt == max_retries - 1:
+                    raise
+                db.session.rollback()
+                time.sleep(1)
+    return wrapper
+
+
+
+
+
 
 
 
@@ -75,6 +109,7 @@ db.create_all()
 
 
 #this function is used to add the URL for a given article to the articles table.
+@retry_db_operation
 def add_article_to_db(url):
     current = Articles(article_url=url)
     db.session.add(current)
@@ -83,6 +118,7 @@ def add_article_to_db(url):
 The following function takes all the information for a given citation in a given article and adds it to a new row in the citations-table.
 The parent articles primary key is added as a foreign key for the citation/row. 
 '''
+@retry_db_operation
 def add_citations_to_db(url,text,source,domain,restrictions,contradictions,support,linked_article):
     current = Citations(citation_url= url, citation_text = text, citation_source_type = source, citation_domain_type = domain, citation_domain_restrictions = restrictions, citation_contradictions = contradictions, citation_support = support, article_url = linked_article, article = Articles.query.filter_by(article_url=linked_article).first())
     db.session.add(current)
@@ -92,28 +128,34 @@ def add_citations_to_db(url,text,source,domain,restrictions,contradictions,suppo
 The below functions are all used for getting information from either the articles or citations table. 
 Some search by the URL others search using a key. Some get all results with the given key, some get the first.
 '''
-
+@retry_db_operation
 def query_articles_table(url):
     query = Articles.query.filter_by(article_url=url).first()
     return query
 
+@retry_db_operation
 def query_citations_table(url):
+    db.session.rollback()
     query = Citations.query.filter_by(article_url=url).first()
+    db.session.commit()
     return query
 
+@retry_db_operation
 def get_all_citations(url):
     query = Citations.query.filter_by(article_url=url).all()
     return query
 
+@retry_db_operation
 def query_articles_table_ID(ID):
     query = Articles.query.filter_by(id=ID).first()
     return query
 
+@retry_db_operation
 def query_citations_table_ID(ID):
     query = Citations.query.filter_by(id=ID).first()
     return query
 
-
+@retry_db_operation
 def check_db_connection():
     checks = 1
     while checks < 3:
@@ -129,6 +171,8 @@ def check_db_connection():
 #This function that takes every string in a list and simply makes a massive string out of all those strings. The elements are now separated by a unique substring 35284777
 #This is because some versions of SQL don't want a list stored in a cell. I feel it will be more robust to store the list as a string. Store it as "Text" to be exact.
 #When the elements from the string need to be accessed again one can simply split the string up according to the unique substring "35284777" that separates them.
+
+@retry_db_operation
 def add_list_as_string(current_cell):
     returned_string = " "
     if ((type(current_cell)) == list) and (len((current_cell)) > 0):
@@ -145,7 +189,6 @@ This function iterates through the relevant information for each citation attach
 This function adds the information related to a given citation into the appropriate columns for each piece of information, and it does this row by row, (citation by citation).
 Basically this gets recruited at the end of both F1 and F2 analyses to add all the resulting data to the database. 
 '''
-
 def add_info_to_db(DF1, article_url):
     #first determine how many columns you must iterate through
     column_variable = 1
@@ -215,16 +258,23 @@ def add_info_to_db(DF1, article_url):
         #after going through all columsn that contain links, the data_frame will be returned with all links classified appropriately
 
            #If the column is not in the DB it's safe to end this process. The DB has been updated
+    db.session.commit()
+    db.session.flush()
+    
+
 
 '''
 This next function grabs all the information for every citation/row for a given article that a user would like to Vett.
 It grabs the information in the form a list that can be sent to the front-end as a JSON object.
 '''
 
-
+@retry_db_operation
 def get_array_from_citations(url):
     #first grab a list of the rows from the citations table pertaining to a specific article URL
+    logger.debug(f"Attempting to get citations for URL: {url}")
     citations_list = get_all_citations(url)
+    logger.debug(f'Citations retrieved: {len(citations_list) if citations_list else 0}')
+    db.session.commit()
     #this is the array that will be returned full of info related to the citations for a given article
     returned_list = []
     for element in citations_list:
@@ -251,6 +301,7 @@ def get_array_from_citations(url):
 
 #from time to time the vetting process will fail due to glitches that are hard to diagnose mostly related to communcation
 #between the server and the database. Also articles will end up in the database with no associated citations in the citations table simply because they had no hyperlinks attached
+@retry_db_operation
 def check_for_unvetted_articles():
     index_variable = 3
     while query_articles_table_ID(index_variable) != None:
@@ -263,6 +314,7 @@ def check_for_unvetted_articles():
         else:
             index_variable = index_variable+1
 
+@retry_db_operation
 def vett_again():
     index_variable = 3
     while query_articles_table_ID(index_variable) != None:

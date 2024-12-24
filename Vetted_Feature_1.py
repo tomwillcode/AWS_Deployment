@@ -1,15 +1,18 @@
 #consolidated programs for Feature 1 V1
 #first import what is needed
-
-from requests_html import HTMLSession
+#from requests_html import HTMLSession
 import pandas as pd
 from urllib.parse import urlparse
 import numpy as np
 import nltk.data
 #this library offers tools for scraping and parsing URL's. I like a lot of the built in functions for requests_html
 from requests_html import HTMLSession
-import logging
-logger = logging.getLogger(__name__)
+#import logging
+#logger = logging.getLogger(__name__)
+#nltk.download('punkt')
+#nltk.download('punkt_tab')
+
+
 
 #this function takes in any URL in string form as the first argument
 #for the second argument it takes any given element in string form
@@ -18,7 +21,7 @@ logger = logging.getLogger(__name__)
 #For the purposes of Feature 1 this will tend to be used to scrape out <p> elements from an article, by taking in the article URL
 #this function will need some exception handling added that it doesn't currently have. There are funny URL's out there that can't be scraped.
 def parse_elements(url,element):
-    logger.info('parse elements started')
+#    logger.info('parse elements started')
     session = HTMLSession()
     r = session.get(url)
     #r.html.render()
@@ -27,7 +30,7 @@ def parse_elements(url,element):
 
 #takes a paragraph as string and breaks it down into sentences
 def sentence_list(paragraph_string):
-    logger.info('sentence list started')
+#    logger.info('sentence list started')
     tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     list_of_sentences = tokenizer.tokenize(paragraph_string)
     return list_of_sentences
@@ -36,7 +39,7 @@ def sentence_list(paragraph_string):
 #need a function to convert the list of links to a list of the text strings covered by the link
 #this will take the list of links obtained using the requests.html function for getting the ordered list out of the <p> element
 def links_as_text(link_list):
-    logger.info('Links as text started')
+#    logger.info('Links as text started')
     text_list = []
     #go into for loop going through all the <a> elements in the list
     for link in link_list:
@@ -51,7 +54,7 @@ def links_as_text(link_list):
 #In some cases the same sentence will contain multiple links, so it will appear in consecutive order in the list for each link in the sentence
 #While-loop I hope will avoid some pitfalls that could slow this algorithm down otherwise
 def return_hyperlink_sentences(link_text_list, text_sentence_list):
-    logger.info('return hyperlink sentences started')
+#    logger.info('return hyperlink sentences started')
     #create the list that will eventually be returned
     linked_sentences_list = []
     #setup two separate variables to iterate through links and sentences in an efficient manner
@@ -76,7 +79,7 @@ def return_hyperlink_sentences(link_text_list, text_sentence_list):
 #the key issue is what is the max number of hyperlinks in a given paragraph? This program counts them up and adds sufficient columns
 #the column naming is of course standardized. Late on a hash or some kind of identifier ought to be added here, so that every dataframe for every article has a unique name or way to identify it
 def build_data_frame(paragraphs):
-    logger.info('build data frame started')
+#    logger.info('build data frame started')
     columns = ['Paragraph', 'Paragraph Text']
     max_links = 0
     for paragraph in paragraphs:
@@ -120,7 +123,7 @@ def build_data_frame(paragraphs):
 #It takes the extracted <p> elements and the dataframe created by previous function as arguments.
 
 def fill_data_frame(paragraphs, paragraphs_data_frame):
-    logger.info('fill data frame started')
+#    logger.info('fill data frame started')
     # 0 Set row number to 0
     working_row = 0
     # 1 for-loop for paragraph in paragraphs to iterate through them all
@@ -177,7 +180,7 @@ URL_Classify_Dataframe = pd.read_csv(r'Sources database.csv')
 
 # need a function to take string version of href as input, iterate through URL_Classify_Dataframe, and classify domains and urls from the current article appropriately
 def classify_href(href, classify_what, by):
-    logger.info('classify href started')
+#    logger.info('classify href started')
     for row in range(0, (URL_Classify_Dataframe.shape[0])):
         if str(URL_Classify_Dataframe.iloc[row][classify_what]) in href:
             return URL_Classify_Dataframe.iloc[row][by]
@@ -187,7 +190,7 @@ def classify_href(href, classify_what, by):
 
 #the DF storing all data for the article the user is reading goes into this function, and the DF is updated with info pertaining to the hyperlinks in the article
 def classify_all_links(DF1):
-    logger.info('classify all links started')
+#    logger.info('classify all links started')
     #first establish the first column to iterate through
     column_variable = 1
     working_column = 'Link ' + (str(column_variable))
@@ -219,7 +222,7 @@ def classify_all_links(DF1):
 
 
 def Feature_1_analysis(url):
-    logger.info('feature 1 analysis started')
+#    logger.info('feature 1 analysis started')
     paragraphs = parse_elements(url, 'p')
     dataframe = build_data_frame(paragraphs)
     dataframe = fill_data_frame(paragraphs, dataframe)

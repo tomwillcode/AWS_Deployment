@@ -1,17 +1,45 @@
-from Vetted_DB_Access_Methods import add_article_to_db, add_info_to_db, add_citations_to_db, query_articles_table, query_citations_table, get_array_from_citations, check_db_connection
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG,  # Use DEBUG to capture detailed logs
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler("Vetted_Server_debug.log", mode='w')
+    ]
+)
+
+logger = logging.getLogger(__name__)
+logger.info("Logging setup complete. Log file should now be created.")
+logger.info('testing hello world')
+print('hello world')
+logger.info("hello world passed.")
+logger.info("beginning imports.")
 from fastapi import FastAPI, Path, Request
+logger.info("fast api imported successfuly!")
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Optional
 from pydantic import BaseModel
 import json
-from Vetted_Feature_1 import Feature_1_analysis
+logger.info("up until json imported.")
 from Vetted_Feature_2 import deep_dive_all_links
+logger.info("Vetted Feature 2 imported successfully!")
+from Vetted_Feature_1 import Feature_1_analysis
+logger.info("vetted feature 1 imported.")
 import uvicorn
-import logging
+from Vetted_DB_Access_Methods import add_article_to_db, add_info_to_db, add_citations_to_db, query_articles_table, query_citations_table, get_array_from_citations, check_db_connection
+logger.info("Vetted DB access methods imported.")
+
+
+#import logging
+
+
+
+
 
 app = FastAPI(debug=True)
-logger = logging.getLogger(__name__)
-logging.basicConfig(filename='vettedserver.log',level=logging.DEBUG)
+#logger = logging.getLogger(__name__)
+#logging.basicConfig(filename='vettedserver.log',level=logging.DEBUG)
 
 #very important code that comes next. This allows permissions of what addresses can make a request to this server.
 # the "origins" allows the front-end chrome extension to make requests
@@ -51,7 +79,8 @@ def add_hello_world(string):
 #if not the article URL is passed to the functions for vetting, and then all the information is added to the database
 @app.post("/post")
 async def post_item(request: Article):
-    logger.info("Post request made")
+#    logger.info("Post request made")
+    logger.info("POST request received")
     current_url = json.loads(request.json())
     url = current_url['url']
     query = (query_articles_table(url))
@@ -74,15 +103,20 @@ async def post_item(request: Article):
 #The algorithm on the front end is designed to keep checking this endpoint for article data in a loop because the vetting process takes time, processor permitting.
 @app.get("/vett")
 def read_item(key):
+    logger.debug(f"Vett endpoint called with key: {key}")
     url = key
     if query_citations_table(url) == None:
+        logger.debug(f"No citations found for {url}")
         return "None"
 
     else:
+        logger.debug(f"Citations found, getting array for {url}")
         array_for_client = get_array_from_citations(url)
         json_array_for_client = json.dumps(array_for_client)
         return json_array_for_client
 
 if __name__ == "__main__":
-    uvicorn.run("Vetted_Server:app", host="0.0.0.0", port=8000, log_level="debug", log_config="log.ini")
+   # uvicorn.run("Vetted_Server:app", host="0.0.0.0", port=8000, log_level="debug", log_config="log.ini")
     #uvicorn.run("Vetted_Server:app", host="0.0.0.0", port=8000)
+    uvicorn.run("Vetted_Server:app", host="0.0.0.0", port=8000)
+    
